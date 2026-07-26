@@ -24,7 +24,7 @@ from datetime import datetime
 # DATOS DE ENTRADA
 # ============================================================
 
-# Puntos de control conocidos: (Norte, Este) en CRTM05 (EPSG:5367)
+# Puntos de control conocidos: (Norte, Este) en UTM Zone 17N (EPSG:32617)
 CONTROL = {
     1: (1014025.65, 652698.82),
     5: (1013952.61, 652626.26),
@@ -44,7 +44,7 @@ POLIGONAL = [
 ]
 
 AREA_PLANO = 2634.29   # m² según plano topográfico
-EPSG_CRTM05 = 5367
+EPSG_UTM17N = 32617   # UTM Zone 17N — sistema oficial para Panamá
 
 # Tramos entre puntos de control:
 # Tramo A: P1 → P2 → P3 → P4 → P5
@@ -180,17 +180,17 @@ def escribir_csv(coords, ruta):
 def escribir_geojson(coords, ruta):
     try:
         from pyproj import Transformer
-        t = Transformer.from_crs("EPSG:5367", "EPSG:4326", always_xy=True)
+        t = Transformer.from_crs(f"EPSG:{EPSG_UTM17N}", "EPSG:4326", always_xy=True)
         def xy(pt):
             N, E = coords[pt]
             lon, lat = t.transform(E, N)
             return [lon, lat]
-        crs_nota = "WGS84 (EPSG:4326) — transformado desde CRTM05"
+        crs_nota = "WGS84 (EPSG:4326) — transformado desde UTM Zone 17N"
     except ImportError:
         def xy(pt):
             N, E = coords[pt]
             return [E, N]
-        crs_nota = "CRTM05 (EPSG:5367) — pyproj no disponible, coordenadas locales"
+        crs_nota = "UTM Zone 17N (EPSG:32617) — pyproj no disponible, coordenadas locales"
 
     anillo = [xy(i) for i in range(1, 9)] + [xy(1)]
     area_calc = area_shoelace([coords[i] for i in range(1, 9)])
@@ -203,7 +203,7 @@ def escribir_geojson(coords, ruta):
                 "nombre": "Límite del terreno",
                 "area_calculada_m2": round(area_calc, 2),
                 "area_plano_m2": AREA_PLANO,
-                "crs_origen": "CRTM05 EPSG:5367",
+                "crs_origen": "UTM Zone 17N EPSG:32617",
                 "crs_archivo": crs_nota,
             }
         }
@@ -230,7 +230,7 @@ def escribir_geojson(coords, ruta):
 def escribir_kml(coords, ruta):
     try:
         from pyproj import Transformer
-        t = Transformer.from_crs("EPSG:5367", "EPSG:4326", always_xy=True)
+        t = Transformer.from_crs(f"EPSG:{EPSG_UTM17N}", "EPSG:4326", always_xy=True)
         def coord_str(pt):
             N, E = coords[pt]
             lon, lat = t.transform(E, N)
@@ -297,7 +297,7 @@ def _wkb_poligono(anillos):
     return b''.join(partes)
 
 
-def _gpkg_blob(wkb, srs_id=EPSG_CRTM05):
+def _gpkg_blob(wkb, srs_id=EPSG_UTM17N):
     # Header GeoPackage: 'GP' + version(0) + flags(0x01=LE sin envelope) + srs_id LE
     return b'GP' + bytes([0, 0x01]) + struct.pack('<i', srs_id) + wkb
 
@@ -351,14 +351,14 @@ def escribir_gpkg(coords, ruta):
          'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],'
          'PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]',
          'WGS 84'),
-        ('CRTM05', 5367, 'EPSG', 5367,
-         'PROJCS["CRTM05",GEOGCS["CR05",DATUM["Costa_Rica_2005",'
+        ('WGS 84 / UTM zone 17N', 32617, 'EPSG', 32617,
+         'PROJCS["WGS 84 / UTM zone 17N",GEOGCS["WGS 84",DATUM["WGS_1984",'
          'SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],'
          'UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],'
-         'PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-84],'
-         'PARAMETER["scale_factor",0.9999],PARAMETER["false_easting",500000],'
+         'PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-81],'
+         'PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],'
          'PARAMETER["false_northing",0],UNIT["metre",1]]',
-         'Costa Rica Transverse Mercator 2005'),
+         'WGS 84 / UTM zone 17N — Panamá'),
     ])
 
     ts = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.000Z')
@@ -369,11 +369,11 @@ def escribir_gpkg(coords, ruta):
     def reg_capa(nombre, tipo_geom, descripcion):
         conn.execute(
             "INSERT INTO gpkg_contents VALUES (?,?,?,?,?,?,?,?,?,?)",
-            (nombre, 'features', nombre, descripcion, ts, *bbox, EPSG_CRTM05)
+            (nombre, 'features', nombre, descripcion, ts, *bbox, EPSG_UTM17N)
         )
         conn.execute(
             "INSERT INTO gpkg_geometry_columns VALUES (?,?,?,?,?,?)",
-            (nombre, 'geom', tipo_geom, EPSG_CRTM05, 0, 0)
+            (nombre, 'geom', tipo_geom, EPSG_UTM17N, 0, 0)
         )
 
     # --- Capa: boundary ---
@@ -454,7 +454,7 @@ def escribir_qgz(coords, ruta_gpkg, ruta_qgz):
         <id>{lid}</id>
         <datasource>./{gpkg_rel}|layername={nombre}</datasource>
         <layername>{nombre}</layername>
-        <srs><spatialrefsys><authid>EPSG:5367</authid></spatialrefsys></srs>
+        <srs><spatialrefsys><authid>EPSG:32617</authid></spatialrefsys></srs>
         <provider encoding="UTF-8">ogr</provider>
       </maplayer>"""
 
@@ -463,8 +463,8 @@ def escribir_qgz(coords, ruta_gpkg, ruta_qgz):
   <title>Casa Generativa</title>
   <projectCrs>
     <spatialrefsys>
-      <authid>EPSG:5367</authid>
-      <description>CRTM05</description>
+      <authid>EPSG:32617</authid>
+      <description>UTM Zone 17N</description>
     </spatialrefsys>
   </projectCrs>
   <mapcanvas>
@@ -476,7 +476,7 @@ def escribir_qgz(coords, ruta_gpkg, ruta_qgz):
       <ymax>{cy + dy/2:.4f}</ymax>
     </extent>
     <destinationsrs>
-      <spatialrefsys><authid>EPSG:5367</authid></spatialrefsys>
+      <spatialrefsys><authid>EPSG:32617</authid></spatialrefsys>
     </destinationsrs>
   </mapcanvas>
   <projectlayers>{capas_xml}
@@ -535,7 +535,7 @@ def escribir_doc(coords, reportes, ruta):
 
 | Parámetro | Valor |
 |-----------|-------|
-| Proyección | CRTM05 (Costa Rica Transverse Mercator 2005) |
+| Proyección | UTM Zone 17N (Costa Rica Transverse Mercator 2005) |
 | EPSG | 5367 |
 | Unidades | metros |
 | Datum | CR05 (compatible con WGS84) |
@@ -634,7 +634,7 @@ del plano topográfico de incorporación del lote.
 
 ## Decisiones Documentadas
 
-1. **Sistema CRTM05:** Se adoptó EPSG:5367 por ser el sistema oficial de Costa Rica
+1. **Sistema UTM Zone 17N:** Se adoptó EPSG:32617 por ser el sistema oficial de Costa Rica
    y por concordar con las coordenadas del plano de incorporación.
 
 2. **Ajuste Bowditch:** Se aplicó la regla de la brújula dentro de cada tramo entre

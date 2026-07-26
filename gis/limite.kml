@@ -15,7 +15,7 @@
       <Polygon>
         <outerBoundaryIs>
           <LinearRing>
-            <coordinates>-82.61064147,9.16800709,0 -82.61077012,9.16790007,0 -82.61082534,9.16782361,0 -82.61115416,9.16778586,0 -82.61130410,9.16734937,0 -82.61121666,9.16732448,0 -82.61079421,9.16747692,0 -82.61071663,9.16774631,0 -82.61064147,9.16800709,0</coordinates>
+            <coordinates>-79.61021493,9.17075486,0 -79.61034362,9.17064782,0 -79.61039886,9.17057133,0 -79.61072778,9.17053357,0 -79.61087777,9.17009695,0 -79.61079029,9.17007205,0 -79.61036772,9.17022454,0 -79.61029011,9.17049401,0 -79.61021493,9.17075486,0</coordinates>
           </LinearRing>
         </outerBoundaryIs>
       </Polygon>
@@ -24,42 +24,42 @@
     <Placemark>
       <name>P1</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61064147,9.16800709,0</coordinates></Point>
+      <Point><coordinates>-79.61021493,9.17075486,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P2</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61077012,9.16790007,0</coordinates></Point>
+      <Point><coordinates>-79.61034362,9.17064782,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P3</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61082534,9.16782361,0</coordinates></Point>
+      <Point><coordinates>-79.61039886,9.17057133,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P4</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61115416,9.16778586,0</coordinates></Point>
+      <Point><coordinates>-79.61072778,9.17053357,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P5</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61130410,9.16734937,0</coordinates></Point>
+      <Point><coordinates>-79.61087777,9.17009695,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P6</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61121666,9.16732448,0</coordinates></Point>
+      <Point><coordinates>-79.61079029,9.17007205,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P7</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61079421,9.16747692,0</coordinates></Point>
+      <Point><coordinates>-79.61036772,9.17022454,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P8</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-82.61071663,9.16774631,0</coordinates></Point>
+      <Point><coordinates>-79.61029011,9.17049401,0</coordinates></Point>
     </Placemark>
   </Document>
 </kml>
