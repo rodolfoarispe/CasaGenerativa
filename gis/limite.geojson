@@ -1,0 +1,186 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -82.61064147093005,
+              9.168007089773635
+            ],
+            [
+              -82.61077012379054,
+              9.167900074274286
+            ],
+            [
+              -82.61082534135613,
+              9.167823613835296
+            ],
+            [
+              -82.61115416118224,
+              9.167785856870685
+            ],
+            [
+              -82.61130410339707,
+              9.167349369358638
+            ],
+            [
+              -82.6112166562475,
+              9.167324477349334
+            ],
+            [
+              -82.61079421257656,
+              9.167476919961528
+            ],
+            [
+              -82.61071662511144,
+              9.167746310201972
+            ],
+            [
+              -82.61064147093005,
+              9.168007089773635
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "nombre": "Límite del terreno",
+        "area_calculada_m2": 2528.36,
+        "area_plano_m2": 2634.29,
+        "crs_origen": "CRTM05 EPSG:5367",
+        "crs_archivo": "WGS84 (EPSG:4326) — transformado desde CRTM05"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.61064147093005,
+          9.168007089773635
+        ]
+      },
+      "properties": {
+        "punto": 1,
+        "norte_crtm05": 1014025.65,
+        "este_crtm05": 652698.82,
+        "tipo": "conocido"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.61077012379054,
+          9.167900074274286
+        ]
+      },
+      "properties": {
+        "punto": 2,
+        "norte_crtm05": 1014013.757,
+        "este_crtm05": 652684.7234,
+        "tipo": "calculado"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.61082534135613,
+          9.167823613835296
+        ]
+      },
+      "properties": {
+        "punto": 3,
+        "norte_crtm05": 1014005.2754,
+        "este_crtm05": 652678.6861,
+        "tipo": "calculado"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.61115416118224,
+          9.167785856870685
+        ]
+      },
+      "properties": {
+        "punto": 4,
+        "norte_crtm05": 1014000.959,
+        "este_crtm05": 652642.5562,
+        "tipo": "calculado"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.61130410339707,
+          9.167349369358638
+        ]
+      },
+      "properties": {
+        "punto": 5,
+        "norte_crtm05": 1013952.61,
+        "este_crtm05": 652626.26,
+        "tipo": "conocido"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.6112166562475,
+          9.167324477349334
+        ]
+      },
+      "properties": {
+        "punto": 6,
+        "norte_crtm05": 1013949.8935,
+        "este_crtm05": 652635.8834,
+        "tipo": "calculado"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.61079421257656,
+          9.167476919961528
+        ]
+      },
+      "properties": {
+        "punto": 7,
+        "norte_crtm05": 1013966.9364,
+        "este_crtm05": 652682.2562,
+        "tipo": "calculado"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.61071662511144,
+          9.167746310201972
+        ]
+      },
+      "properties": {
+        "punto": 8,
+        "norte_crtm05": 1013996.77,
+        "este_crtm05": 652690.67,
+        "tipo": "conocido"
+      }
+    }
+  ]
+}
