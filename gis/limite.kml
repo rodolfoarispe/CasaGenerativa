@@ -15,7 +15,7 @@
       <Polygon>
         <outerBoundaryIs>
           <LinearRing>
-            <coordinates>-79.61021493,9.17075486,0 -79.61034362,9.17064782,0 -79.61039886,9.17057133,0 -79.61072778,9.17053357,0 -79.61087777,9.17009695,0 -79.61079029,9.17007205,0 -79.61036772,9.17022454,0 -79.61029011,9.17049401,0 -79.61021493,9.17075486,0</coordinates>
+            <coordinates>-79.61021493,9.17075486,0 -79.61034373,9.17061853,0 -79.61039903,9.17052507,0 -79.61072789,9.17050511,0 -79.61087777,9.17009695,0 -79.61079029,9.17007205,0 -79.61036772,9.17022454,0 -79.61029011,9.17049401,0 -79.61021493,9.17075486,0</coordinates>
           </LinearRing>
         </outerBoundaryIs>
       </Polygon>
@@ -29,17 +29,17 @@
     <Placemark>
       <name>P2</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-79.61034362,9.17064782,0</coordinates></Point>
+      <Point><coordinates>-79.61034373,9.17061853,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P3</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-79.61039886,9.17057133,0</coordinates></Point>
+      <Point><coordinates>-79.61039903,9.17052507,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P4</name>
       <styleUrl>#vertex</styleUrl>
-      <Point><coordinates>-79.61072778,9.17053357,0</coordinates></Point>
+      <Point><coordinates>-79.61072789,9.17050511,0</coordinates></Point>
     </Placemark>
     <Placemark>
       <name>P5</name>

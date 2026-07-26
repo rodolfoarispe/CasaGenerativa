@@ -43,15 +43,28 @@ POLIGONAL = [
     (8, 1, 30.00, 'N', 15, 45, 10, 'E'),
 ]
 
-AREA_PLANO = 2634.29   # m² según plano topográfico
-EPSG_UTM17N = 32617   # UTM Zone 17N — sistema oficial para Panamá
+AREA_PLANO    = 2634.29   # m² según plano topográfico (incorporación)
+AREA_ORIGINAL = 2420.00   # m² finca original (sin Lote A)
+AREA_LOTE_A   =  214.29   # m² Lote A incorporado
+EPSG_UTM17N   = 32617     # UTM Zone 17N — sistema oficial para Panamá
 
-# Tramos entre puntos de control:
-# Tramo A: P1 → P2 → P3 → P4 → P5
-# Tramo B: P5 → P6 → P7 → P8
-# Tramo C: P8 → P1
+# Estrategia de ajuste (v2 — terreno quebrado):
+#
+# P3 está determinado por DOS mediciones independientes que coinciden en 0.01m:
+#   - Desde P1 via Lote A (P1→P2→P3)
+#   - Desde P8 via segmento norte (P8→12.46m N74°14'30"W→P3)
+# Por tanto P3 se trata como ancla adicional.
+#
+# Tramo LA : P1 → P2 → P3  (Lote A, sin ajuste — imprecisiones aceptadas)
+# Tramo B  : P5 → P6 → P7 → P8  (excelente, 1:9906)
+# Tramo C  : P8 → P1  (bueno, 1:3478)
+# Tramo O  : P3 → P4 → P5  (lado oeste del polígono original, Bowditch entre P3 y P5)
+#
+# El error de 20.39m en Norte se concentra en P4. Hipótesis más probable:
+# distancias de pendiente en segmentos 3-4 y/o 4-5 copiadas sin corrección
+# horizontal desde la parcelación original (1976). A verificar en campo agosto 2026.
+
 TRAMOS = {
-    'A (P1→P5)': (POLIGONAL[0:4], CONTROL[1], CONTROL[5]),
     'B (P5→P8)': (POLIGONAL[4:7], CONTROL[5], CONTROL[8]),
     'C (P8→P1)': (POLIGONAL[7:8], CONTROL[8], CONTROL[1]),
 }
@@ -674,18 +687,44 @@ def main():
     reportes = []
     adj_all = {}
 
+    # --- Tramo B y C (confiables, sin cambios) ---
     for nombre, (segs, inicio, fin) in TRAMOS.items():
         adj, reporte = ajuste_bowditch(segs, inicio, fin, nombre)
         adj_all.update(adj)
         reportes.append(reporte)
 
-    # Coordenadas finales: control exacto, calculados ajustados
-    coords = {}
-    for pt in range(1, 9):
-        coords[pt] = CONTROL[pt] if pt in CONTROL else adj_all[pt]
+    # --- P3: determinado desde P1 via Lote A (0.01m de consistencia con P8) ---
+    segs_loteA_P3 = POLIGONAL[0:2]  # 1-2 y 2-3
+    loteA_raw = calcular_tramo(segs_loteA_P3, CONTROL[1])
+    P3 = loteA_raw[3]
+    P2 = loteA_raw[2]
+    print(f"\n  P3 via Lote A (P1→P2→P3):")
+    print(f"    N={P3[0]:.4f}  E={P3[1]:.4f}")
+
+    # --- Tramo O: P3 → P4 → P5 (Bowditch con P3 y P5 como anclas) ---
+    segs_O = POLIGONAL[2:4]  # 3-4 y 4-5
+    adj_O, rep_O = ajuste_bowditch(segs_O, P3, CONTROL[5], "O (P3→P5, lado oeste)")
+    adj_all.update(adj_O)
+    reportes.append(rep_O)
+
+    # Coordenadas finales
+    coords = {
+        1: CONTROL[1],
+        2: P2,
+        3: P3,
+        4: adj_O[4],
+        5: CONTROL[5],
+        6: adj_all[6],
+        7: adj_all[7],
+        8: CONTROL[8],
+    }
 
     area_calc = area_shoelace([coords[i] for i in range(1, 9)])
-    print(f"\n>>> Área calculada: {area_calc:.2f} m²  (plano: {AREA_PLANO:.2f} m²)")
+    area_orig = area_shoelace([coords[i] for i in [8, 3, 4, 5, 6, 7]])
+    area_loteA = area_shoelace([coords[i] for i in [1, 2, 3, 8]])
+    print(f"\n>>> Área total calculada:    {area_calc:.2f} m²  (plano: {AREA_PLANO:.2f} m²)")
+    print(f"    Polígono original (est.): {area_orig:.2f} m²  (registrado: {AREA_ORIGINAL:.2f} m²)")
+    print(f"    Lote A:                  {area_loteA:.2f} m²  (registrado: {AREA_LOTE_A:.2f} m²)")
 
     print("\n>>> Generando archivos:")
     escribir_csv(coords, 'gis/vertices.csv')

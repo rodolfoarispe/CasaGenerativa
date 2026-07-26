@@ -1,7 +1,7 @@
 # GIS — Componente Espacial
 
-**Nivel de madurez:** 3 — Medido
-**Última actualización:** 2026-07-25
+**Nivel de madurez:** 3 — Medido (pendiente verificación de campo)
+**Última actualización:** 2026-07-26
 
 ---
 
@@ -15,21 +15,19 @@
 | Unidades | metros |
 | Meridiano central | 81° W |
 | Factor de escala | 0.9996 |
-| Cobertura | 78°W–84°W — incluye Panamá |
 
-El plano indica "Norte de Cuadrícula", lo que confirma el uso de norte UTM.
-Los puntos de control verificados con pyproj ubican el terreno en 9.17°N, 79.61°W — consistente con Chilibre, Panamá.
+Verificado con pyproj: el terreno ubica en 9.17°N, 79.61°W — Chilibre, Panamá.
 
 ---
 
-## Contexto del Plano Topográfico
+## Contexto del Plano
 
-El plano de incorporación (diciembre 2020, Téc. Top. Manuel Rumbo Puga) registra
-la unión de dos propiedades. Contiene **dos levantamientos distintos**:
+El plano de incorporación (dic. 2020, Téc. Top. Manuel Rumbo Puga, Lic. 80-304-020)
+registra la fusión de dos propiedades. Contiene dos levantamientos:
 
-### Levantamiento 1 — Lote "A" segregado (214.29 m²)
+### Lote "A" — franja incorporada (214.29 m²)
 
-Pequeña franja cedida por la Finca 249115 (colindante norte) e incorporada al terreno.
+Cedida por la Finca 249115 para dar acceso a Calle Tumba Muerto.
 
 | Estación | Distancia (m) | Rumbo |
 |----------|-------------:|-------|
@@ -38,9 +36,7 @@ Pequeña franja cedida por la Finca 249115 (colindante norte) e incorporada al t
 | 3-8 | 12.46 | S 74°14'30" E |
 | 8-1 | 30.00 | N 15°45'10" E |
 
-### Levantamiento 2 — Incorporación completa (2,634.38 m²)
-
-Poligonal exterior de la finca resultante de la incorporación.
+### Incorporación completa (2,634.38 m²)
 
 | Estación | Distancia (m) | Rumbo |
 |----------|-------------:|-------|
@@ -53,118 +49,93 @@ Poligonal exterior de la finca resultante de la incorporación.
 | 7-8 | 31.00 | N 15°45'10" E |
 | 8-1 | 30.00 | N 15°45'10" E |
 
-### Geometría de la fusión
-
-En el punto 3, los dos levantamientos divergen en **direcciones opuestas** sobre el mismo rumbo S 74°14'30":
-
-- Lote A va **12.46 m hacia el Este** (→ P8): era el lindero interno entre ambas fincas, suprimido al fusionar.
-- La finca completa va **37.54 m hacia el Oeste** (→ P4): lindero externo del terreno original.
-
-Los segmentos 1-2, 2-3 y 8-1 son compartidos entre ambos levantamientos.
+En P3 los dos levantamientos divergen en direcciones opuestas a lo largo del
+rumbo S/N 74°14'30": el Lote A va 12.46m al Este hacia P8 (lindero interno suprimido),
+y la incorporación completa va 37.54m al Oeste hacia P4 (lindero externo).
 
 ---
 
-## Metodología de Reconstrucción
+## Estrategia de Reconstrucción (v2)
 
-### Proceso
+### Anclas disponibles
 
-1. Conversión de rumbos cuadrantales a acimutes geográficos:
+| Punto | Norte (m) | Este (m) | Confiabilidad |
+|-------|----------:|---------:|---------------|
+| P1 | 1014025.6500 | 652698.8200 | GPS Garmin (±3–5 m) |
+| P5 | 1013952.6100 | 652626.2600 | GPS Garmin (±3–5 m) |
+| P8 | 1013996.7700 | 652690.6700 | GPS Garmin (±3–5 m) |
+| **P3** | **1014000.1592** | **652678.6869** | **Alta — dos métodos coinciden en 0.01 m** |
 
-| Cuadrante | Fórmula |
-|-----------|---------|
-| N α E | acimut = α |
-| S α E | acimut = 180° − α |
-| S α W | acimut = 180° + α |
-| N α W | acimut = 360° − α |
+P3 fue determinado por dos rutas independientes:
+- Desde P1 vía Lote A (P1→P2→P3)
+- Desde P8 vía segmento norte (P8 + 12.46m N74°14'30"W)
 
-2. Incrementos por tramo: ΔN = d·cos(acimut), ΔE = d·sin(acimut)
+Ambas dan P3 con solo **0.01 m** de diferencia — el punto más fiablemente conocido.
 
-3. Propagación desde los tres puntos de control conocidos (P1, P5, P8).
+### Tramos de ajuste
 
-4. Verificación del cierre en cada punto de control.
-
-5. Ajuste **Bowditch (regla de la brújula)**: el error de cada tramo se distribuye
-   proporcionalmente a la longitud de sus segmentos. Los puntos de control no se modifican.
-
----
-
-## Puntos de Control
-
-Coordenadas del plano, medidas con GPS Garmin (precisión de consumo, ±3–5 m típico).
-
-| Punto | Norte (m) | Este (m) | Origen |
-|-------|----------:|---------:|--------|
-| 1 | 1014025.6500 | 652698.8200 | Plano topográfico |
-| 5 | 1013952.6100 | 652626.2600 | Plano topográfico |
-| 8 | 1013996.7700 | 652690.6700 | Plano topográfico |
+| Tramo | Segmentos | Anclas | Cierre | Precisión |
+|-------|-----------|--------|--------|-----------|
+| B | P5→P6→P7→P8 | P5, P8 | 0.009 m | **1:9,906** — excelente |
+| C | P8→P1 | P8, P1 | 0.009 m | **1:3,478** — buena |
+| O (oeste) | P3→P4→P5 | P3, P5 | 20.39 m | **1:5** — error documentado |
 
 ---
 
 ## Poligonal Reconstruida
 
-| Punto | Norte (m) | Este (m) | Tipo |
-|-------|----------:|---------:|------|
-| 1 | 1014025.6500 | 652698.8200 | conocido |
-| 2 | 1014013.7570 | 652684.7234 | calculado — ajustado |
-| 3 | 1014005.2754 | 652678.6861 | calculado — ajustado |
-| 4 | 1014000.9590 | 652642.5562 | calculado — ajustado |
-| 5 | 1013952.6100 | 652626.2600 | conocido |
-| 6 | 1013949.8935 | 652635.8834 | calculado — ajustado |
-| 7 | 1013966.9364 | 652682.2562 | calculado — ajustado |
-| 8 | 1013996.7700 | 652690.6700 | conocido |
-
-Aproximado en WGS84: 9.17°N, 79.61°W — Chilibre, Panamá.
+| Punto | Norte (m) | Este (m) | Método |
+|-------|----------:|---------:|--------|
+| 1 | 1014025.6500 | 652698.8200 | GPS (ancla) |
+| 2 | 1014010.5186 | 652684.7238 | Lote A, sin ajuste |
+| 3 | 1014000.1592 | 652678.6869 | Lote A = segmento norte (0.01 m) |
+| 4 | 1013997.8119 | 652642.5567 | Bowditch tramo O (+7.85 m N corregido) |
+| 5 | 1013952.6100 | 652626.2600 | GPS (ancla) |
+| 6 | 1013949.8935 | 652635.8834 | Bowditch tramo B |
+| 7 | 1013966.9364 | 652682.2562 | Bowditch tramo B |
+| 8 | 1013996.7700 | 652690.6700 | GPS (ancla) |
 
 ---
 
-## Error de Cierre por Tramo
+## Error en el Tramo Oeste (P3→P4→P5)
 
-### Tramo A — P1 → P5 (segmentos 1-2, 2-3, 3-4, 4-5)
-
-| Métrica | Valor |
-|---------|------:|
-| Error ΔN | +20.3908 m |
-| Error ΔE | −0.0030 m |
-| Cierre lineal | 20.3908 m |
-| Longitud del tramo | 130.21 m |
-| Precisión relativa | **1:6** |
-
-> **Error anómalo documentado.** El error es casi exclusivamente en Norte (+20.39 m)
-> con Este prácticamente perfecto (−0.003 m). Este patrón apunta a una discrepancia
-> entre instrumentos: los rumbos provienen de la estación total (Topcon 229, precisa)
-> y las coordenadas de control del GPS Garmin de mano (±3–5 m). Una diferencia de
-> 20 m en Norte es posible si el GPS tuvo condiciones adversas de cobertura satelital,
-> o si hubo un error de transcripción al pasar las coordenadas al plano.
->
-> **Hipótesis descartada:** cambiar Norte de P5 a 1013932.61 mejora el tramo A
-> (1:333) pero colapsa el tramo B (1:5). La inconsistencia es estructural.
->
-> **Acción recomendada:** verificar con el topógrafo (Lic. Manuel Rumbo Puga,
-> CED 8-211-1821) las coordenadas originales registradas en el GPS.
-
-### Tramo B — P5 → P8 (segmentos 5-6, 6-7, 7-8)
+### Magnitud
 
 | Métrica | Valor |
 |---------|------:|
-| Error ΔN | −0.0062 m |
-| Error ΔE | −0.0067 m |
-| Cierre lineal | 0.0091 m |
-| Longitud del tramo | 90.41 m |
-| Precisión relativa | **1:9,906** |
+| Error ΔN | +20.39 m |
+| Error ΔE | −0.003 m |
+| Cierre lineal | 20.39 m |
+| Longitud del tramo | 97.54 m |
+| Precisión relativa | 1:5 |
 
-Excelente precisión — consistente con estación total.
+### Diagnóstico
 
-### Tramo C — P8 → P1 (segmento 8-1)
+El error es **exclusivamente en Norte** — el Este cierra a 3 mm. Este patrón
+descarta errores aleatorios y pendiente uniforme (demostrado matemáticamente:
+un factor de pendiente uniforme reduce ΔN y ΔE proporcionalmente, pero ΔE ya
+cierra perfecto — aplicarlo lo rompería).
 
-| Métrica | Valor |
-|---------|------:|
-| Error ΔN | +0.0067 m |
-| Error ΔE | +0.0054 m |
-| Cierre lineal | 0.0086 m |
-| Longitud del tramo | 30.00 m |
-| Precisión relativa | **1:3,478** |
+**Hipótesis más probable:** El terreno es quebrado con pendientes fuertes. Los
+segmentos 3-4 (S74°W, 37.54m) y 4-5 (S15°W, 60m) probablemente provienen de la
+parcelación original de 1976, medidos con cinta sobre pendiente sin corrección
+horizontal. Al transcribir al plano 2020 se copiaron las distancias de pendiente
+como si fueran horizontales. Dado que el segmento 4-5 va casi en dirección N-S
+(cos 15°=0.96), su componente norte absorbe casi todo el error.
 
-Buena precisión — consistente con estación total.
+**Descartado:** transposición de dígito en P5, corrección de pendiente uniforme,
+error de bearing, error solo en d(3-4).
+
+### Verificación pendiente — agosto 2026
+
+Lo que medir en campo:
+
+1. **Distancia horizontal P3→P4** — comparar con 37.54 m del plano.
+2. **Distancia horizontal P4→P5** — comparar con 60.00 m del plano. Este es el segmento clave.
+3. **Desnivel total P3→P5** — con clinómetro o app para estimar corrección de pendiente.
+4. **Existencia física de P4** — el plano indica todos los puntos con varilla de acero.
+   Si P4 no existe o fue movido, el dato de campo puede ser incorrecto.
+5. **Coordenada GPS de P4** — con teléfono o GPS de mano para triangulación inicial.
 
 ---
 
@@ -172,14 +143,15 @@ Buena precisión — consistente con estación total.
 
 | | Valor |
 |---|------:|
-| Área registrada (plano) | 2,634.29 m² |
-| Área medida en plano (de rumbos y distancias) | 2,634.38 m² |
-| Área calculada con poligonal ajustada | 2,528.36 m² |
-| Diferencia vs. registrada | −105.93 m² |
+| Área registrada (plano, legal) | 2,634.29 m² |
+| Área medida en plano (de rumbos y dist.) | 2,634.38 m² |
+| **Lote A calculado** | **214.19 m²** ← preciso (error 0.10 m²) |
+| Polígono original estimado | ~2,091 m² |
+| Total reconstruido | 2,305 m² |
+| Diferencia vs. registrado | −329 m² (13.6%) |
 
-La diferencia de área (−106 m²) se explica por el error del tramo A: el punto P5
-ajustado queda desplazado ~20 m al sur de su posición registrada, comprimiendo el polígono.
-El área legal vigente es **2,634.29 m²**.
+La diferencia de área se debe al error en el tramo O. El área legal vigente
+es **2,634.29 m²**. El Lote A (214.19 m²) es la parte más precisa del cálculo.
 
 ---
 
@@ -190,7 +162,7 @@ El área legal vigente es **2,634.29 m²**.
 | `gis/vertices.csv` | Coordenadas de todos los vértices (UTM Zone 17N) |
 | `gis/limite.geojson` | Polígono del límite (WGS84, convertido con pyproj) |
 | `gis/limite.kml` | Polígono del límite para Google Earth |
-| `gis/casa_generativa.gpkg` | GeoPackage con todas las capas del proyecto |
+| `gis/casa_generativa.gpkg` | GeoPackage con todas las capas |
 | `gis/proyecto_qgis.qgz` | Proyecto QGIS preconfigurado |
 | `gis/reconstruccion.py` | Script de reconstrucción reproducible |
 
@@ -213,22 +185,17 @@ El área legal vigente es **2,634.29 m²**.
 
 ## Decisiones Documentadas
 
-1. **Sistema UTM Zone 17N (EPSG:32617):** Las coordenadas del plano ubican el terreno
-   en 9.17°N, 79.61°W (verificado con pyproj), consistente con Chilibre, Panamá.
-   Se corrigió un error inicial que usaba CRTM05 (EPSG:5367, Costa Rica).
+1. **UTM Zone 17N (EPSG:32617):** Verificado con pyproj: 9.17°N, 79.61°W.
+   Corregido de error inicial que usaba CRTM05 (Costa Rica).
 
-2. **Ajuste Bowditch por tramos:** La poligonal se dividió en tres tramos anclados
-   en los puntos de control (P1→P5, P5→P8, P8→P1). El ajuste distribuye el error
-   proporcionalmente a la longitud de cada segmento sin modificar los puntos de control.
+2. **P3 como ancla adicional:** Determinado con 0.01 m de consistencia entre
+   dos rutas independientes. Se usa como inicio del tramo O en lugar de P1.
 
-3. **Puntos de control no modificados:** P1, P5 y P8 se mantienen exactamente
-   como aparecen en el plano.
+3. **Tramo O ajustado Bowditch entre P3 y P5:** La corrección de 20.39 m se
+   distribuye sobre los 97.54 m del tramo. P4 recibe +7.85 m N de corrección.
 
-4. **Dos levantamientos en un mismo plano:** El plano contiene los datos del
-   Lote A (214.29 m²) y los de la incorporación completa (2,634.38 m²).
-   La reconstrucción usa exclusivamente los datos de incorporación.
+4. **Lote A sin ajuste:** Los segmentos 1-2, 2-3 no se ajustan — las imprecisiones
+   en la franja cedida son aceptadas. P3 queda en su posición natural (0.01 m).
 
-5. **Error de tramo A documentado pero no resuelto:** El error de 20.39 m en Norte
-   en el tramo P1→P5 está documentado. Requiere verificación con el topógrafo antes
-   de poder considerarse resuelto. Hasta entonces, la poligonal actual es la mejor
-   aproximación posible con los datos disponibles.
+5. **Error en tramo O documentado — pendiente verificación de campo en agosto 2026.**
+   Hasta entonces, la posición de P4 es una estimación Bowditch.
